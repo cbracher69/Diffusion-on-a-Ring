@@ -37,10 +37,8 @@ The material has been organized into several folders:
     
   A peer-reviewed publication that illustrates the physical context, briefly explains the approach, and delivers some findings based on calculations with the program:
   
-    *Hopping Kinetics on a Finite 1D Chain: An Exact Analysis*
-
-    J.-S. McEwen, S. H. Payne, H. J. Kreuzer, C. Bracher
-    
+    *Hopping Kinetics on a Finite 1D Chain: An Exact Analysis*<br>
+    J.-S. McEwen, S. H. Payne, H. J. Kreuzer, C. Bracher<br>
     *International Journal of Quantum Chemistry*, Vol. 106, 2889–2903 (2006)
     
   (See also references therein.)
