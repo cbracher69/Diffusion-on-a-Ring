@@ -13,26 +13,32 @@ The code made available here, written in C++ as a console application, exploits 
 
 The material has been organized into several folders:
 
-* C++ code
+* *C++ code*
+  
   Contains 32-bit and 64-bit versions of the source code.  Due to the binary representation of atomic patterns, the 32-bit version can handle rings with up to 31 sites, while the 64-bit version extends this limit to 61 sites.  (The algebra underlying the mathematical approach restricts the number of sites to a prime number.)
   
-* Documentation
+* *Documentation*
+  
   User manuals that explains basic notions, and detail the program options and switches available
   
-* Notes
+* *Notes*
+  
   Extensive notes regarding the underlying mathematics and physics of the algorithm and its implementation.
   
-* Example
+* *Example*
+  
   Results for a few model calculations for 5 atoms on a ring of 19 sites, including graphical illustrations.
   
-* Presentation
+* *Presentation*
+    
   A presentation explaining some of the aspects of the problem, and showcasing results generated with the code.
   
-* Publication
+* *Publication*
+    
   A peer-reviewed publication that illustrates the physical context, briefly explains the approach, and delivers some findings based on calculations with the program:
   
-  Hopping Kinetics on a Finite 1D Chain: An Exact Analysis,
-  J.-S. McEwen, S. H. Payne, H. J. Kreuzer, C. Bracher,
-  International Journal of Quantum Chemistry, Vol. 106, 2889–2903 (2006)
-  
+    /Hopping Kinetics on a Finite 1D Chain: An Exact Analysis/,
+    J.-S. McEwen, S. H. Payne, H. J. Kreuzer, C. Bracher,
+    International Journal of Quantum Chemistry, Vol. 106, 2889–2903 (2006)
+    
   (See also references therein.)
