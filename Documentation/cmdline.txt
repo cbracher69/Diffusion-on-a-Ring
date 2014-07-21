@@ -1,0 +1,220 @@
+/*****************************************************************************************
+
+        Diffusion Along a Circle
+        (Canonical Ensemble)
+        Eigensystem Approach
+
+        Written by:  Christian Bracher
+        Version   :  0.31
+        Date      :  March 22, 2004
+
+*****************************************************************************************/
+
+COMMAND LINE SYNTAX:
+
+DIFF initial_state_pattern output_file [options]
+
+initial_state_pattern ... A character sequence that encodes a valid pattern of atoms,
+                          serving as the initial state of the system.  Valid patterns
+                          consist of the characters "o" (sites occupied by atoms) and
+                          "." (empty sites).  The total number of sites p (i.e., the
+                          length of the character sequence) must be a prime number
+                          between 3 and 31.
+
+output_file ............. The path and file name for the output files, without file
+                          extensions.  DIFF will normally create two output files,
+                          output_file.INF (a file containing information on the
+                          decomposition into eigenstates), and output_file.DAT (a file
+                          displaying the temporal evolution of pattern averages).
+
+OPTIONS ................. The following optional switches control the execution of DIFF.
+                          (They must be separated by blanks.)
+
+/? ...................... Display a short overview of the DIFF command line options.
+
+/[ ...................... Force output of normalized left eigenvectors of the
+                          unsymmetrized rate matrices.  This option must be combined
+                          with the switch /E (show eigenvectors) to take effect.
+                          (By default, /E returns unit norm eigenvectors of the
+                          symmetrized rate matrix.)
+
+/] ...................... Force output of normalized right eigenvectors of the
+                          unsymmetrized rate matrices.  This option must be combined
+                          with the switch /E (show eigenvectors) to take effect.
+                          (By default, /E returns unit norm eigenvectors of the
+                          symmetrized rate matrix.)
+
+/#=subspace ............. Limit calculation to momentum subspace indicated.  This
+                          will reduce the amount of memory consumed by the program,
+                          and accelerate execution by a factor p/2.  The output of 
+                          temporal evolution data will be suppressed.  The option is
+                          also incompatible with loading or storing block data
+                          (options /l, /s).  By default, DIFF diagonalizes all
+                          momentum subspaces.
+
+/1 ...................... Calculate temporal evolution data for all p single-site
+                          averages [default]
+
+/2 ...................... Calculate temporal evolution data for all two-site atom-atom
+                          correlators, i.e., the probability to find two atoms at each 
+                          pair of pre-specified sites.
+
+/A=rate ................. Rate for atomic jumps of type "A" (atomic jumps without
+                          initial or final neighbour) [default value: 1.0]
+
+/B=rate ................. Rate for atomic jumps of type "B" (atomic jumps with
+                          initial, but without final neighbour) [default value: 1.0]
+
+/c[heck] ................ Check accuracy of numerical diagonalization scheme.  If
+                          activated, DIFF provides information about the numerical
+                          deviations incurred in the spectral decomposition of
+                          unity and the symmetrized rate matrices (L2 or Schur norm).
+                          This option significantly increases execution time and is
+                          provided for testing purposes.
+
+/C=rate ................. Rate for atomic jumps of type "C" (atomic jumps without
+                          initial, but with final neighbour) [default value: 1.0]
+
+/d=digits ............... Numerical precision of evolution data output in digits.
+                          Allowed values are 2 ... 16 [default: 6]
+
+/D=rate ................. Rate for atomic jumps of type "D" (atomic jumps with both
+                          initial and final neighbours) [default value: 1.0]
+
+/e[igenvalues] .......... Force output of ordered eigenvalue list of rate coefficient
+                          matrix for each momentum q = 0,1,...,(p-1)/2.
+
+/E[igenvectors] ......... Supply eigenvectors of the rate coefficent matrices. 
+                          This switch must be combined with /e to take effect.
+                          By default, /E forces the output of unit norm eigenvectors
+                          of the symmetrized rate matrix, but this behavior can be 
+                          changed by adding the switches /[ or /] to provide the
+                          left and right eigenvectors of the original rate matrices,
+                          respectively.
+                          Note:  The size of the output can be very significant, and
+                          the option is mainly provided for testing purposes.
+
+/h[elp] ................. Display a short overview of the DIFF command line options.
+
+/l=block_data_file ...... Load decomposition of transformation matrix from disk.
+                          (The extension .BLK will be appended to block_data_file.)
+                          The data must have been saved to disk before using the /s
+                          option.  The stored parameter set is checked for
+                          compatibility.  This option provides the opportunity to
+                          speed up serial computations that employ the same number
+                          of sites, atoms, and identical rate parameters.
+
+/L[og time scale] ....... Use a logarithmic time scale in the generation of temporal 
+                          evolution data [default: linear].
+
+/n[o temporal evolution]  Suppress output of temporal evolution data.  Only information 
+                          on the diagonalization procedure and equilibrium averages (if 
+                          selected using the /q switch) will be produced.
+
+/o[utput rate matrix] ... Supply the rate coefficent matrix in symbolic form.  The data
+                          will consist of three parts:  A rate matrix for forward 
+                          (clockwise) jumps, a rate matrix for backward (counterclock-
+                          wise) jumps, and the loss terms for each site (diagonal 
+                          entries).  Note:  The output can be substantial in size.
+
+/p[rimitives] ........... Display all primitive patterns, i.e., all significantly (apart
+                          from rotations) different arrangements of the atoms on the p
+                          sites.  The option also provides information on the mirror 
+                          symmetry properties of the patterns.
+
+/P=pattern .............. Provide temporal evolution of average of specified pattern(s).
+                          Valid patterns consist of p symbols (p - number of sites) and 
+                          are composed of the tokens "o" (atom occupies designated site),
+                          "." (site is empty), and "x" (content of site not specified).
+                          The /P option may occur up to 512 times in the command line,
+                          facilitating simultaneous evaluation of multiple patterns.
+
+/q[uilibrium averages] .. Output equilibrium average for selected pattern(s).
+
+/Q[-projection] ......... Display the contribution of the normalized right eigenvectors
+                          to the single-site averages in momentum space <q>.  These
+                          numbers are always real.
+
+/s=block_data_file ...... Save decomposition of transformation matrix to disk.  (The 
+                          extension .BLK will be appended to block_data_file.)  In 
+                          later runs, the data can be read from disk using the /l option,
+                          allowing to speed up serial computations that share the same
+                          number of sites and atoms, and employ identical jump rates.
+
+/S=steps ................ Number of time steps used in the evaluation of temporal
+                          averages [default value: 100]
+
+/t=start_time ........... Initial time for calculation of temporal averages
+                          [default value: 0.0]
+
+/T=stop_time ............ Final time for calculation of temporal averages
+                          [default value: 10.0]
+
+/u[nitary trafo skip] ... Calculate and output eigenvalues only, but skip evaluation
+                          of unitary transform.  With this option, the eigenvectors
+                          remain undefined, and no temporal evolution data will be
+                          produced.  This option speeds up execution time
+                          considerably, and drastically reduces memory requirements.
+                          It is incompatible with the options /c (accuracy check),
+                          /E (eigenvector output), /Q (projection onto single-site
+                          averages <q>), and /s (save block data), however.
+                         
+/v[ariation from eqlib] . Generate temporal evolution data output that contains the
+                          deviation from the equilibrium average of the selected 
+                          pattern(s) rather than their actual average occupation.
+                          This option automatically activates the output of the 
+                          corresponding equilibrium averages (the /q option).
+                          
+/x[ponential format] .... Force temporal evolution data output in scientific notation
+                          (mantissa-exponent format), instead of the default fixed 
+                          width notation.  (The number of significant digits is
+                          controlled by the /d option.)
+
+/y[mmetrize vectors] .... Post-symmetrize eigenvectors of the q=0 momentum subspace.
+                          This option enforces projection of the numerically determined
+                          eigenvectors on the symmetric and antisymmetric subspaces with
+                          respect to mirror reflection.  Its usage will resolve the
+                          degeneracy of eigenvalues that occurs for identical jump rate
+                          parameters.  However, it introduces an additional numerical 
+                          error into the diagonalization scheme that can be significant 
+                          if two eigenvalues in the same subspace are almost degenerate.
+                          The evaluation of the eigenvalues itself is not affected.
+
+/z[erlegung] ............ Show decomposition [German: Zerlegung] of initial 
+                          configuration into eigenvectors in the momentum subspaces.
+                          The option yields the individual weights of the eigenvectors.
+                          The weight of the equilibrium eigenvector is always unity.
+
+                          
+******************************************************************************************
+
+REMARK ON COMMAND LINE LIMITS
+
+Under MS-DOS, the length of a single command line is limited to 126 characters.  This 
+presents a severe limitation of the functionality of the DIFF command, since a large 
+number of options is available.  In particular, the problem affects multiple custom 
+comparison patterns specified using the /P option which occupy (p + 4) characters per 
+pattern, and easily extend the command line beyond the 126 character limit.
+
+To work around this problem under MS-DOS, several strategies are available:
+
+ (i) Compilation using the Microsoft Visual C++ compiler.  The executables thus generated
+     apparently do not obey the 126 byte limit, but read options past this boundary.
+    
+(ii) The response file method.  For programs created with the GNU gcc compiler (and 
+     possibly others), there is an option to redirect the input at run time:  Instead of 
+     reading from the command line, DIFF reads the program arguments from a file.  Up to 
+     16 kByte of text can be supplied to DIFF using this method.  It works as follows:
+     
+     (a) Store the arguments and options chosen for the DIFF run in a file, say
+         OPTIONS.OPT.  This is the response file.
+         
+     (b) Run DIFF from the command line or a batch file, but use the name of the
+         response file as the argument, preceded by the special character @:
+         
+             DIFF @OPTIONS.OPT
+             
+         Then, the contents of OPTIONS.OPT will provide the remainder of the command 
+         line, i.e., the arguments and options supplied to DIFF.      
+     
+     For more information, see the DJGPP documentation.
